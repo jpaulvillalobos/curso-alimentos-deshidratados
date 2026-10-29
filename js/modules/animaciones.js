@@ -80,6 +80,8 @@ export function initAnimaciones() {
     ...revealGroup('.faq-intro', 'fade-in-left'),
     ...revealGroup('.faq-item', 'fade-in-up', true),
     ...revealGroup('.faq-final-cta', 'fade-in-up'),
+    ...revealGroup('.lead-intro', 'fade-in-left'),
+    ...revealGroup('.lead-form-panel', 'fade-in-right'),
     ...revealGroup('.forsua-verification-card', 'fade-in-up')
   ];
 

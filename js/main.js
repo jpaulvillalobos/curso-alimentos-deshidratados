@@ -1,4 +1,6 @@
 import { initAnimaciones, initAcordeon, initCounters } from './modules/animaciones.js';
+import { initEfectoAgua } from './assets/efecto-agua.js';
+import { initSolicitudForm } from './modules/formulario-contacto.js';
 
 document.documentElement.classList.add('js-motion');
 
@@ -69,6 +71,8 @@ function init() {
   initAnimaciones();
   initAcordeon();
   initCounters();
+  initEfectoAgua();
+  initSolicitudForm();
   initHeader();
   initMobileNavigation();
   initConversionTracking();

@@ -1,72 +1,16 @@
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkR-fFkwcZds7l57ULehPYBFy8zytL9g93qobb85DH98mqUsTBPmWdxCq9rogkoOzR6g/exec';
+
 export function initSolicitudForm() {
   const form = document.querySelector('#solicitud-informacion-curso');
   const status = document.querySelector('#form-submit-status');
   const submitButton = form?.querySelector('[type="submit"]');
-  const tokenInput = form?.elements.namedItem('turnstileToken');
-  const widget = document.querySelector('#turnstile-widget');
 
-  if (!form || !status || !submitButton || !tokenInput || !widget) return;
-
-  const siteKey = form.dataset.turnstileSitekey;
-  const hasSiteKey = siteKey && !siteKey.startsWith('REEMPLAZAR_');
-  let turnstileWidgetId;
-
-  if (hasSiteKey) {
-    const placeholder = widget.querySelector('.turnstile-unconfigured');
-    placeholder?.remove();
-
-    const renderWidget = () => {
-      if (!window.turnstile) {
-        status.textContent = 'No se pudo cargar la verificación anti-spam. Recarga la página e inténtalo de nuevo.';
-        status.classList.add('is-error');
-        return;
-      }
-
-      turnstileWidgetId = window.turnstile.render(widget, {
-        sitekey: siteKey,
-        action: 'lead_form',
-        callback: (token) => {
-          tokenInput.value = token;
-          status.textContent = '';
-          status.classList.remove('is-error');
-        },
-        'expired-callback': () => {
-          tokenInput.value = '';
-        },
-        'error-callback': () => {
-          tokenInput.value = '';
-          status.textContent = 'La verificación expiró o falló. Vuelve a intentarlo.';
-          status.classList.add('is-error');
-        }
-      });
-    };
-
-    if (window.turnstile) {
-      renderWidget();
-    } else {
-      const script = document.createElement('script');
-      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-      script.async = true;
-      script.defer = true;
-      script.onload = renderWidget;
-      script.onerror = () => {
-        status.textContent = 'No se pudo cargar la verificación anti-spam. Recarga la página e inténtalo de nuevo.';
-        status.classList.add('is-error');
-      };
-      document.head.append(script);
-    }
-  }
+  if (!form || !status || !submitButton) return;
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     if (!form.reportValidity()) return;
-
-    if (!hasSiteKey || !tokenInput.value) {
-      status.textContent = 'Completa la verificación anti-spam antes de enviar.';
-      status.classList.add('is-error');
-      return;
-    }
 
     submitButton.disabled = true;
     form.setAttribute('aria-busy', 'true');
@@ -74,26 +18,39 @@ export function initSolicitudForm() {
     status.classList.remove('is-error');
 
     try {
-      const response = await fetch('/.netlify/functions/solicitud-informacion', {
+      const fields = new FormData(form);
+      const correo = String(fields.get('Correo') || '').trim();
+      const necesidad = String(fields.get('Necesidad') || '').trim();
+      const data = {
+        nombre: String(fields.get('Nombre') || '').trim(),
+        apellidos: String(fields.get('Apellidos') || '').trim(),
+        correo,
+        email: correo,
+        pais: String(fields.get('Pais') || '').trim(),
+        telefono: String(fields.get('Telefono') || '').trim(),
+        empresa: String(fields.get('Empresa') || '').trim(),
+        ayuda: String(fields.get('Ayuda') || '').trim(),
+        etapa: String(fields.get('Etapa') || '').trim(),
+        necesidad,
+        mensaje: necesidad,
+        consentimiento: String(fields.get('Consentimiento') || '').trim(),
+        origen: String(fields.get('origen') || '').trim(),
+        'bot-field': String(fields.get('bot-field') || '').trim()
+      };
+
+      await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(Object.fromEntries(new FormData(form).entries()))
+        mode: 'no-cors',
+        body: JSON.stringify(data)
       });
-      const result = await response.json();
 
-      if (!response.ok || result.success !== true) {
-        throw new Error('No se pudo registrar la solicitud.');
-      }
-
-      document.dispatchEvent(new CustomEvent('lobolink:lead_submitted'));
-      window.location.assign('/gracias.html');
+      form.reset();
+      status.textContent = 'Solicitud enviada. Google no permite confirmar el registro desde esta página; si no recibes contacto, escríbenos por WhatsApp para verificarlo.';
+      submitButton.disabled = false;
+      form.removeAttribute('aria-busy');
     } catch {
       status.textContent = 'No pudimos registrar tu solicitud. Intenta de nuevo o contáctanos por WhatsApp.';
       status.classList.add('is-error');
-      tokenInput.value = '';
-      if (window.turnstile && turnstileWidgetId !== undefined) {
-        window.turnstile.reset(turnstileWidgetId);
-      }
       submitButton.disabled = false;
       form.removeAttribute('aria-busy');
     }

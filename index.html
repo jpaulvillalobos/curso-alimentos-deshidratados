@@ -367,14 +367,12 @@
               <p>Los campos con <span aria-hidden="true">*</span> son obligatorios.</p>
             </div>
 
-            <form id="solicitud-informacion-curso" name="solicitud-informacion-curso" method="POST" action="/gracias.html" data-netlify="true" netlify-honeypot="bot-field" data-turnstile-sitekey="REEMPLAZAR_CON_SITE_KEY_PUBLICA">
+            <form id="solicitud-informacion-curso" name="solicitud-informacion-curso" method="POST" action="/gracias.html" data-netlify="true" netlify-honeypot="bot-field">
               <input type="hidden" name="form-name" value="solicitud-informacion-curso">
               <input type="hidden" name="origen" value="landing-produccion-alimentos-deshidratados">
               <div class="form-honeypot" aria-hidden="true">
                 <label>No completes este campo<input name="bot-field" tabindex="-1" autocomplete="off"></label>
               </div>
-              <input type="hidden" name="turnstileToken" value="">
-
               <div class="lead-fields-grid">
                 <div class="form-field">
                   <label for="lead-nombre">Nombre <span>*</span></label>
@@ -442,15 +440,8 @@
 
               <details class="lead-privacy-note" id="aviso-datos">
                 <summary>¿Cómo se utilizarán mis datos?</summary>
-                <p>Netlify procesa este formulario para que LoboLink reciba tu solicitud. Cloudflare Turnstile realiza una verificación técnica anti-spam. LoboLink utilizará los datos que compartas para responderla y contactarte sobre el motivo seleccionado; no es una suscripción a mensajes promocionales. Si pides el PDF, se usará tu correo para atender esa solicitud. Para consultas sobre tus datos, puedes escribir al WhatsApp de LoboLink.</p>
+                <p>Al enviar el formulario, los datos se transmiten a la Web App de Google Apps Script vinculada a Google Sheets para registrar tu solicitud. LoboLink los utilizará para responderte y contactarte sobre el motivo seleccionado; no es una suscripción a mensajes promocionales. Si pides el PDF, se usará tu correo para atender esa solicitud. Para consultas sobre tus datos, puedes escribir al WhatsApp de LoboLink.</p>
               </details>
-
-              <div class="turnstile-block">
-                <div class="turnstile-widget" id="turnstile-widget">
-                  <p class="turnstile-unconfigured">Verificación anti-spam requerida antes de publicar el formulario.</p>
-                </div>
-                <small class="turnstile-hint">Verificación de seguridad protegida por Cloudflare.</small>
-              </div>
 
               <label class="consent-field" for="lead-consentimiento">
                 <input id="lead-consentimiento" name="Consentimiento" type="checkbox" value="autorizado" required>

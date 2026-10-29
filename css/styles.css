@@ -1782,35 +1782,6 @@ h1 span,
   line-height: 1.6;
 }
 
-.turnstile-block {
-  display: grid;
-  justify-items: start;
-  gap: 7px;
-  margin-top: 17px;
-}
-
-.turnstile-widget {
-  min-height: 65px;
-  max-width: 100%;
-}
-
-.turnstile-unconfigured {
-  max-width: 100%;
-  margin: 0;
-  padding: 12px;
-  color: #7A4A00;
-  border: 1px solid #E8D6A8;
-  border-radius: 4px;
-  background: #FFF9E8;
-  font-size: 10px;
-  line-height: 1.5;
-}
-
-.turnstile-hint {
-  color: var(--text-muted);
-  font-size: 9px;
-}
-
 .consent-field {
   display: flex;
   align-items: flex-start;

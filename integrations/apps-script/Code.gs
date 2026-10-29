@@ -55,11 +55,10 @@ function doPost(event) {
 
   try {
     const properties = PropertiesService.getScriptProperties();
-    const expectedToken = properties.getProperty('API_TOKEN');
     const spreadsheetId = properties.getProperty('SPREADSHEET_ID');
     const sheetId = Number(properties.getProperty('SHEET_GID') || '0');
 
-    if (!expectedToken || !spreadsheetId) {
+    if (!spreadsheetId) {
       return jsonResponse({ success: false, error: 'server_not_configured' });
     }
 
@@ -68,26 +67,24 @@ function doPost(event) {
     }
 
     const data = JSON.parse(event.postData.contents);
-    if (!data || data.apiToken !== expectedToken) {
-      return jsonResponse({ success: false, error: 'unauthorized' });
-    }
+    if (!data || typeof data !== 'object') return jsonResponse({ success: false, error: 'invalid_request' });
 
     if (String(data['bot-field'] || '').trim()) {
       return jsonResponse({ success: false, error: 'invalid_request' });
     }
 
     const lead = {
-      nombre: String(data.Nombre || '').trim(),
-      apellidos: String(data.Apellidos || '').trim(),
-      correo: String(data.Correo || '').trim().toLowerCase(),
-      pais: String(data.Pais || '').trim(),
-      telefono: String(data.Telefono || '').trim(),
-      empresa: String(data.Empresa || '').trim(),
-      ayuda: String(data.Ayuda || '').trim(),
-      etapa: String(data.Etapa || '').trim(),
-      necesidad: String(data.Necesidad || '').trim(),
-      consentimiento: String(data.Consentimiento || '').trim(),
-      origen: String(data.Origen || '').trim()
+      nombre: String(data.nombre || '').trim(),
+      apellidos: String(data.apellidos || '').trim(),
+      correo: String(data.correo || data.email || '').trim().toLowerCase(),
+      pais: String(data.pais || '').trim(),
+      telefono: String(data.telefono || '').trim(),
+      empresa: String(data.empresa || '').trim(),
+      ayuda: String(data.ayuda || '').trim(),
+      etapa: String(data.etapa || '').trim(),
+      necesidad: String(data.necesidad || data.mensaje || '').trim(),
+      consentimiento: String(data.consentimiento || '').trim(),
+      origen: String(data.origen || '').trim()
     };
 
     const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.correo);
